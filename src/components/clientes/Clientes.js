@@ -1,4 +1,5 @@
-import React, {useEffect, useState, Fragment} from 'react';
+import React, {useEffect, useState, Fragment, useContext} from 'react';
+import {useNavigate} from 'react-router-dom'
 
 //importamos axios
 import clienteAxios from '../../config/axios'
@@ -7,24 +8,45 @@ import Cliente from './Cliente';
 
 import { Link } from 'react-router-dom';
 
+//importo el context
+import { CRMContext } from '../../context/CRMContext';
+
+
 function Clientes() {
     //aplicar State
     const [clientes, guardarClientes] = useState([]);
+    //Utilizo el context
+    const[ auth, guardarAuth] = useContext(CRMContext);
+    console.log(auth);
 
+    const navigate = useNavigate();
 
     //Query api
-    const consultarAPI= async () => {
-        const clientesConsulta = await clienteAxios.get('/clientes');
-        //resultado en el state
-        guardarClientes(clientesConsulta.data);
-
-    }
-
-
-
-
+    
     useEffect( () => {
-        consultarAPI();
+        
+        if(auth.token !== ''){
+            const consultarAPI = async () => {
+                try{
+                    const clientesConsulta = await clienteAxios.get('/clientes', {
+                        headers: {
+                            Authorization : `Bearer ${auth.token}`
+                        }
+                    });
+
+                    guardarClientes(clientesConsulta.data);
+
+                }catch (error){
+                    if(error.response.status === 500){
+                        navigate('/iniciar-sesion'); 
+                    }
+                }
+            }
+            consultarAPI();
+        
+        }else{
+            navigate('/iniciar-sesion'); 
+        }
 
     }, [clientes]);
     return(

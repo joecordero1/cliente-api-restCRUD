@@ -1,10 +1,15 @@
-import React from 'react';
-import {Link}  from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import {Link, useNavigate}  from 'react-router-dom';
 import Swal from 'sweetalert2';
 import clienteAxios from '../../config/axios';
+import { CRMContext } from '../../context/CRMContext';
+
 
 function Cliente({cliente}) {
     const { _id, nombre, apellido, empresa, email, telefono} = cliente;
+    const [auth, ] = useContext(CRMContext);
+    const token = auth.token;
+    const navigate = useNavigate();
     
     const deleteCliente = id => {
         Swal.fire({
@@ -18,7 +23,11 @@ function Cliente({cliente}) {
             confirmButtonText: "Eliminar"
           }).then((result) => {
             if (result.value) {
-                clienteAxios.delete(`/clientes/${_id}`)
+                clienteAxios.delete(`/clientes/${_id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then (res => {
                     Swal.fire({
                         title: "Eliminado",
@@ -26,11 +35,15 @@ function Cliente({cliente}) {
                         icon: "success"
                       });
                 })
+                .catch(error => {
+                    // Manejo de errores (por ejemplo, mostrar un mensaje de error)
+                    Swal.fire('Error', 'No se pudo eliminar el cliente', 'error');
+                });
 
             }
           });
     }
-    
+
     return(
         <li className="cliente">
             <div className="info-cliente">

@@ -1,11 +1,14 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useContext, useEffect } from 'react';
 import { act } from 'react-dom/test-utils';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom';
+import { CRMContext } from '../../context/CRMContext';
 
 
 function NuevoCliente() {
+
+    const [auth, guardarAuth] = useContext(CRMContext);
     const navigate = useNavigate();
 
     const [cliente, guardarCliente] = useState({
@@ -32,7 +35,11 @@ function NuevoCliente() {
         e.preventDefault();
 
         //envia peticion
-        clienteAxios.post('/clientes', cliente)
+        clienteAxios.post('/clientes', cliente, {
+            headers: {
+                Authorization: `Bearer ${auth.token}`
+            }
+        })
         .then(res => {
             if(res.data.code === 11000){
                 Swal.fire({
@@ -61,6 +68,14 @@ function NuevoCliente() {
         return valido;
     }
 
+    //verificar autenticacion de usuario
+    useEffect(() => {
+        if (!auth.auth || localStorage.getItem('token') !== auth.token) {
+            navigate('/iniciar-sesion');
+        }
+    }, [auth, navigate]);
+    
+    
     return(
         <Fragment>
             <h2>Nuevo Cliente</h2>
@@ -126,5 +141,4 @@ function NuevoCliente() {
     );
 }
 
-//el router toma un componente y devuelve otro componente
 export default NuevoCliente;

@@ -1,23 +1,32 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import Swal from 'sweetalert2';
 import clienteAxios from '../../config/axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { CRMContext } from '../../context/CRMContext';
 
 
 
 function Login() {
 
+    //Auth y token
+    const [auth, guardarAuth] = useContext(CRMContext);
+    console.log(auth);
     const [ credenciales, guardarCredenciales] = useState({});
-    
+    const navigate = useNavigate();
     //inicia sesion en el servidor
     const iniciarSesion = async e => {
         e.preventDefault();
 
         try{
-            const respuesta = await clienteAxios.post('/iniciar/sesion', credenciales)
+            const respuesta = await clienteAxios.post('/iniciar-sesion', credenciales)
             //aqui pone el token en el local storage
             const {token} = respuesta.data;
             localStorage.setItem('token', token);
+            //colocar el token en el state
+            guardarAuth({
+                token,
+                auth:true
+            })
 
             //alerta
             Swal.fire(
@@ -33,9 +42,9 @@ function Login() {
         } catch (error) {
             console.log(error);
             Swal.fire({
-                type:'error',
+                icon:'error',
                 title: 'Hubo un error',
-                text: error.responde.data.mensaje
+                text: error.response.data.mensaje
             })
         }
     }

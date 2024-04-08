@@ -1,12 +1,13 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useContext } from 'react';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2'
 import { useNavigate, useParams } from 'react-router-dom';
+import { CRMContext } from '../../context/CRMContext';
 
 
 function EditarCliente() {
     const { _id } = useParams();
-
+    const [auth, guardarAuth] = useContext(CRMContext);
     const navigate = useNavigate();
 
     const [cliente, datosCliente] = useState({
@@ -19,7 +20,11 @@ function EditarCliente() {
 
     //query a la api
     const consultarAPI = async () => {
-        const clienteConsulta = await clienteAxios.get(`/clientes/${_id}`);
+        const clienteConsulta = await clienteAxios.get(`/clientes/${_id}`, {
+            headers: {
+                Authorization: `Bearer ${auth.token}`
+            }
+        })
         //colocar en el state
         datosCliente(clienteConsulta.data);
     }
@@ -53,7 +58,11 @@ function EditarCliente() {
     const actualizarCliente = e => {
         e.preventDefault();
 
-        clienteAxios.put(`/clientes/${cliente._id}`, cliente)
+        clienteAxios.put(`/clientes/${cliente._id}`, cliente, {
+            headers: {
+                Authorization: `Bearer ${auth.token}`
+            }
+        })
             .then(res => {
                 if (res.data.code === 11000) {
                     Swal.fire('Error', 'Ese cliente ya está registrado', 'error');
@@ -67,6 +76,14 @@ function EditarCliente() {
             });
     };
 
+
+    //verificar autenticacion de usuario
+    useEffect(() => {
+        if (!auth.auth || localStorage.getItem('token') !== auth.token) {
+            navigate('/iniciar-sesion');
+        }
+    }, [auth, navigate]);
+    
     return(
         <Fragment>
             <h2>Editar Cliente</h2>
