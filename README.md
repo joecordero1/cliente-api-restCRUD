@@ -1,70 +1,7 @@
-# Getting Started with Create React App
+# Diseño de ingenieria
+Por Joe Cordero
+![](https://private-user-images.githubusercontent.com/120497590/320658097-caa9bbdb-3472-408a-9c8b-7103e6f4f7c3.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTI2MTM4ODgsIm5iZiI6MTcxMjYxMzU4OCwicGF0aCI6Ii8xMjA0OTc1OTAvMzIwNjU4MDk3LWNhYTliYmRiLTM0NzItNDA4YS05YzhiLTcxMDNlNmY0ZjdjMy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNDA4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDQwOFQyMTU5NDhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0zMWM0ZDhjYWEyNWMyMDRjYmE3MGZlZTZhYzkxZmM0ZTQxNTk0MDkwZDg5YWQxMTRiNDJkMjUzMTVhNmNiNjU1JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.-xdVhLlam-me8DQX9kFJ6-pSSoscqOyeZkXVZm2PRzo)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+El flujo de login en en mi peoyecto MVC con Node.js, Express.js, MongoDB y React funciona de la siguiente manera: Cuando un usuario desea iniciar sesión, interactúa con la interfaz de inicio de sesión proporcionada por la aplicación React (Login.js). Al enviar sus credenciales, la información se transmite desde el cliente React a través de una solicitud HTTP POST hacia el servidor Express.js que está ejecutando la API Rest. Este servidor maneja la solicitud en UsuariosController.js, donde las credenciales enviadas son comparadas con los datos almacenados en la base de datos MongoDB. Si las credenciales son correctas, se genera un token JWT que el servidor envía de vuelta al cliente como parte de la respuesta a la solicitud de inicio de sesión.
 
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Una vez que el cliente React recibe el token JWT del servidor, procede a almacenar este token en el Local Storage del navegador para mantener la sesión del usuario. Este token servirá para futuras solicitudes a rutas protegidas, permitiendo que solo los usuarios autenticados puedan acceder a ellas. Con el token almacenado, el usuario puede realizar operaciones CRUD en la sección de administración de clientes, siempre y cuando incluya el token en los headers de autorización para las solicitudes que realice a la API. Esto asegura que el acceso a la funcionalidad de administración esté restringido a usuarios con credenciales válidas.
