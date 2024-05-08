@@ -25,7 +25,7 @@ const Header = () => {
         <header className="barra">
         <div className="contenedor">
             <div className="contenido-barra">
-                <h1>JC - Administrador de Clientes</h1>
+                <h1>JC - Administrador de Animales</h1>
                 { auth.auth ? (
                     <button
                     type="button"
