@@ -10,7 +10,7 @@ const Navegacion = () => {
             <h2>Administrar</h2>
             <nav className="navegacion">
                 <Link to={"/"} className="animales">Animales</Link>
-                <Link to={"/"} className="intervenciones">Intervenciones</Link>
+                <Link to={"/intervenciones"} className="intervenciones">Intervenciones</Link>
                 {/* <a href="productos.html" className="productos">Productos</a> */}
                 {/* <a href="pedidos.html" className="pedidos">Pedidos</a> */}
             </nav>

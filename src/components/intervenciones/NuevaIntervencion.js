@@ -1,38 +1,50 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CRMContext } from '../../context/CRMContext';
 
 function NuevaIntervencion() {
+    const { _idU } = useParams();
 
-    const [auth,] = useContext(CRMContext);
+    const [auth, usuario] = useContext(CRMContext);
     const navigate = useNavigate();
 
     const [intervencion, guardarIntervencion] = useState({
         Id_Animal: '',
+        Id_Usuario: usuario ? usuario._id : '', // Asigna automáticamente el ID del usuario
+        detalles: [],
         nombre: '',
         resultadoAntes: '',
         resultadoDespues: '',
-        comentarios: '',
-        seguimiento: []
+        comentarios: ''
     });
 
-    // Cargar datos iniciales de animales
+    // Aqui carga los animlas, debo cambiarlo para 
     const [animales, setAnimales] = useState([]);
+    const [tipoNombre, setTipos] = useState([]);
+    const [detalles, setDetalles] = useState([]); // Agrega detalles y setDetalles al estado
+
 
     useEffect(() => {
-        const cargarAnimales = async () => {
+        const cargarDatos = async () => {
             try {
-                const respuesta = await clienteAxios.get('/animales', {
-                    headers: { Authorization: `Bearer ${auth.token}` }
-                });
+                const [respuesta, respuestaTipos] = await Promise.all([
+                    clienteAxios.get('/animales', {
+                        headers: { Authorization: `Bearer ${auth.token}` }
+                    }),
+                    clienteAxios.get('/tipos-intervencion', {
+                        headers: { Authorization: `Bearer ${auth.token}` }
+                    })
+                ]);
                 setAnimales(respuesta.data);
+                setTipos(respuestaTipos.data);
+                
             } catch (error) {
                 console.log(error);
             }
         };
-        cargarAnimales();
+        cargarDatos();
     }, [auth.token]);
 
     const actualizarState = e => {
@@ -40,12 +52,32 @@ function NuevaIntervencion() {
             ...intervencion,
             [e.target.name]: e.target.value
         });
-    }
+
+        // Actualizar detalles cuando se ingresa una clave o valor
+        if (e.target.name.startsWith('clave-') || e.target.name.startsWith('valor-')) {
+            const index = e.target.name.split('-')[1];
+            const newDetalles = [...detalles];
+            newDetalles[index] = {
+                ...newDetalles[index],
+                [e.target.name.startsWith('clave-') ? 'clave' : 'valor']: e.target.value
+            };
+            setDetalles(newDetalles);
+        }
+    };
+    const agregarCampoDetalle = () => {
+        setDetalles([...detalles, { clave: '', valor: '' }]);
+    };
 
     const agregarIntervencion = e => {
         e.preventDefault();
 
-        clienteAxios.post('/intervenciones', intervencion, {
+        // Agregar los detalles al objeto de intervención antes de enviar la solicitud
+        const intervencionConDetalles  = {
+            ...intervencion,
+            detalles: detalles.filter(detalle => detalle.clave !== '' || detalle.valor !== '')
+        };
+
+        clienteAxios.post('/intervenciones', intervencionConDetalles, {
             headers: {
                 Authorization: `Bearer ${auth.token}`
             }
@@ -102,10 +134,23 @@ function NuevaIntervencion() {
                     </select>
                 </div>
 
+                {/* Campos dinámicos basados en el tipo de intervención seleccionado */}
+                <div className="campo">
+                    <label>Detalles de Intervención:</label>
+                    {detalles.map((detalle, index) => (
+                        <div className="detalle-campo" key={index}>
+                            <input type="text" name={`clave-${index}`} onChange={actualizarState} placeholder="Clave" />
+                            <input type="text" name={`valor-${index}`} onChange={actualizarState} placeholder="Valor" />
+                        </div>
+                    ))}
+                    <button type="button" onClick={agregarCampoDetalle}>+</button>
+                </div>
+
+
                 <div className="campo">
                     <label>Nombre:</label>
                     <input type="text"
-                        placeholder="Nombre de la intervención"
+                        placeholder="Nombre intervención"
                         name="nombre"
                         onChange={actualizarState}
                     />

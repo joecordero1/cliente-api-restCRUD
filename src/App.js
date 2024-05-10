@@ -15,6 +15,9 @@ import EditarCliente from './components/clientes/EditarCliente';
 import Animales from './components/animales/Animales';
 import NuevoAnimal from './components/animales/NuevoAnimal';
 import EditarAnimal from './components/animales/EditarAnimal';
+import Intervenciones from './components/intervenciones/Intervenciones';
+import NuevaIntervencion from './components/intervenciones/NuevaIntervencion';
+import EditarIntervencion from './components/intervenciones/EditarIntervencion';
 import Login from './components/auth/Login';
 import { CRMContext, CRMProvider } from './context/CRMContext';
 
@@ -37,6 +40,9 @@ function App () {
               <Route path="/" element={<Animales/>}/>
               <Route path="/animales/nuevo" element={<NuevoAnimal/>}/>
               <Route path="/animales/editar/:_id" element={<EditarAnimal/>}/>
+              <Route path="/intervenciones" element={<Intervenciones/>}/>
+              <Route path="/intervenciones/nueva" element={<NuevaIntervencion/>}/>
+              <Route path="/intervenciones/editar/:_id" element={<EditarIntervencion/>}/>
               <Route path="/iniciar-sesion" element={<Login/>}/>
             </Routes>
 

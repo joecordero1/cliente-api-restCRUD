@@ -15,7 +15,7 @@ function Animal({ animal }) {
     const [razaNombre, setRazaNombre] = useState('');
     const [sexos, setSexoNombre] = useState('');
 
-    const { _id, tipoAnimal, raza, estados, ubicacion, salud, Edad,sexo, FechaRegistro, FechaActualizacion } = animal;
+    const { _id, tipoAnimal, raza, estados, ubicacion, salud, intervenciones, Edad,sexo, FechaRegistro, FechaActualizacion } = animal;
 
     // Cargar los nombres de tipoAnimal, raza y sexo al cargar el componente
     useEffect(() => {
@@ -77,6 +77,12 @@ function Animal({ animal }) {
         }
         return items.map(item => `${item.estado.clave} (${item.detalles.map(det => `${det.clave}: ${det.valor}`).join(', ')})`).join('; ');
     };
+    const formatIntervenciones = (items) => {
+        if (!items || items.length === 0) {
+            return 'Sin datos';
+        }
+        return items.map(item => `${item.intervenciones.clave} (${item.detalles.map(det => `${det.clave}: ${det.valor}`).join(', ')})`).join('; ');
+    };
 
     return (
         <li className="animal">
@@ -87,6 +93,7 @@ function Animal({ animal }) {
                 <p>Estado(s): {formatEstadoSalud(estados)}</p>
                 <p>Ubicación: {`Latitud: ${ubicacion.coordinates[1]}, Longitud: ${ubicacion.coordinates[0]}`}</p>
                 <p>Salud: {formatEstadoSalud(salud)}</p>
+                <p>Intervenciones: {formatIntervenciones(intervenciones)}</p>
                 <p>Edad: {Edad}</p>
                 <p>Sexo: {sexos}</p>
                 <p>Fecha de Registro: {FechaRegistro}</p>

@@ -14,6 +14,7 @@ function NuevoAnimal() {
         Id_Raza: '',
         estados: [],
         salud: [],
+        intervenciones: [],
         ubicacion: {
             type: 'Point',
             coordinates: [] // Iniciar vacío, puede ser llenado por una selección en el mapa o ingreso manual.
@@ -70,24 +71,25 @@ function NuevoAnimal() {
                 Authorization: `Bearer ${auth.token}`
             }
         })
-            .then(res => {
-                if (res.data.code === 11000) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Hubo un error",
-                        text: 'Animal ya registrado'
-                    });
-                } else {
-                    console.log(res.data);
-                    Swal.fire({
-                        title: "Se agregó ese animal",
-                        text: res.data.mensaje, // Asigna el mensaje de la respuesta a la propiedad 'text'
-                        icon: "success"
-                    });
-                    // Usar navigate para redirigir
-                    navigate('/');
-                }
-            });
+        .then(res => {
+            if (res.data.code === 11000) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Hubo un error",
+                    text: 'Animal ya registrado'
+                });
+            } else {
+                console.log(res.data);
+                Swal.fire({
+                    title: "Se agregó ese animal",
+                    text: res.data.mensaje, // Asigna el mensaje de la respuesta a la propiedad 'text'
+                    icon: "success"
+                });
+                // Usar navigate para redirigir
+                navigate('/');
+                console.log(animal);
+            }
+        });
     }
 
     // Validar el formulario
