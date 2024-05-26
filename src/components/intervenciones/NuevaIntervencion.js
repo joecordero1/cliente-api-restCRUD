@@ -2,12 +2,14 @@ import React, { Fragment, useState, useContext, useEffect } from 'react';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CRMContext } from '../../context/CRMContext';
 
 function NuevaIntervencion() {
     const { _idU } = useParams();
     console.log(_idU); //DEBO CAMBIAR ESTO, YA QUE NO ESTOY DIFERENCIANDO EN CUANDO SE HACE UNA INTERVENCION DESDE ADMIN QUE DESDE FUERA DE ÉL
 
+    const [auth, usuario] = useContext(CRMContext);
     const [auth, usuario] = useContext(CRMContext);
     const navigate = useNavigate();
 
@@ -19,15 +21,21 @@ function NuevaIntervencion() {
         resultadoAntes: '',
         resultadoDespues: '',
         comentarios: ''
+        comentarios: ''
     });
 
+    // Aqui carga los animlas, debo cambiarlo para 
     // Aqui carga los animlas, debo cambiarlo para 
     const [animales, setAnimales] = useState([]);
     const [tipoNombre, setTipos] = useState([]);
     const [detalles, setDetalles] = useState([]); // Agrega detalles y setDetalles al estado
 
+    const [tipoNombre, setTipos] = useState([]);
+    const [detalles, setDetalles] = useState([]); // Agrega detalles y setDetalles al estado
+
 
     useEffect(() => {
+        const cargarDatos = async () => {
         const cargarDatos = async () => {
             try {
                 const [respuesta, respuestaTipos] = await Promise.all([
@@ -41,6 +49,7 @@ function NuevaIntervencion() {
                 console.log(error);
             }
         };
+        cargarDatos();
         cargarDatos();
     }, [auth.token]);
 
@@ -65,9 +74,31 @@ function NuevaIntervencion() {
         setDetalles([...detalles, { clave: '', valor: '' }]);
     };
 
+        // Actualizar detalles cuando se ingresa una clave o valor
+        if (e.target.name.startsWith('clave-') || e.target.name.startsWith('valor-')) {
+            const index = e.target.name.split('-')[1];
+            const newDetalles = [...detalles];
+            newDetalles[index] = {
+                ...newDetalles[index],
+                [e.target.name.startsWith('clave-') ? 'clave' : 'valor']: e.target.value
+            };
+            setDetalles(newDetalles);
+        }
+    };
+    const agregarCampoDetalle = () => {
+        setDetalles([...detalles, { clave: '', valor: '' }]);
+    };
+
     const agregarIntervencion = e => {
         e.preventDefault();
 
+        // Agregar los detalles al objeto de intervención antes de enviar la solicitud
+        const intervencionConDetalles  = {
+            ...intervencion,
+            detalles: detalles.filter(detalle => detalle.clave !== '' || detalle.valor !== '')
+        };
+
+        clienteAxios.post('/intervenciones', intervencionConDetalles, {
         // Agregar los detalles al objeto de intervención antes de enviar la solicitud
         const intervencionConDetalles  = {
             ...intervencion,
@@ -144,9 +175,23 @@ function NuevaIntervencion() {
                 </div>
 
 
+                {/* Campos dinámicos basados en el tipo de intervención seleccionado */}
+                <div className="campo">
+                    <label>Detalles de Intervención:</label>
+                    {detalles.map((detalle, index) => (
+                        <div className="detalle-campo" key={index}>
+                            <input type="text" name={`clave-${index}`} onChange={actualizarState} placeholder="Clave" />
+                            <input type="text" name={`valor-${index}`} onChange={actualizarState} placeholder="Valor" />
+                        </div>
+                    ))}
+                    <button type="button" onClick={agregarCampoDetalle}>+</button>
+                </div>
+
+
                 <div className="campo">
                     <label>Nombre:</label>
                     <input type="text"
+                        placeholder="Nombre intervención"
                         placeholder="Nombre intervención"
                         name="nombre"
                         onChange={actualizarState}
