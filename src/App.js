@@ -15,8 +15,16 @@ import EditarCliente from './components/clientes/EditarCliente';
 import Animales from './components/animales/Animales';
 import NuevoAnimal from './components/animales/NuevoAnimal';
 import EditarAnimal from './components/animales/EditarAnimal';
+import Intervenciones from './components/intervenciones/Intervenciones';
+import NuevaIntervencion from './components/intervenciones/NuevaIntervencion';
+import EditarIntervencion from './components/intervenciones/EditarIntervencion';
+import EstadosAnimal from './components/estadosAnimal/EstadosAnimal';
+import NuevoEstadoAnimal from './components/estadosAnimal/NuevoEstadoAnimal';
+import EditarEstadoAnimal from './components/estadosAnimal/EditarEstadoAnimal';
 import Login from './components/auth/Login';
 import { CRMContext, CRMProvider } from './context/CRMContext';
+import AnadirEstados  from './components/animales/AnadirEstados';
+import AnadirIntervenciones from './components/animales/AnadirIntervencion';
 
 function App () {
 
@@ -37,7 +45,16 @@ function App () {
               <Route path="/" element={<Animales/>}/>
               <Route path="/animales/nuevo" element={<NuevoAnimal/>}/>
               <Route path="/animales/editar/:_id" element={<EditarAnimal/>}/>
+              <Route path="/intervenciones" element={<Intervenciones/>}/>
+              <Route path="/intervenciones/nueva" element={<NuevaIntervencion/>}/>
+              <Route path="/intervenciones/editar/:_id" element={<EditarIntervencion/>}/>
+              <Route path="/estados-animal" element={<EstadosAnimal/>}/>
+              <Route path="/estados-animal/nuevo" element={<NuevoEstadoAnimal/>}/>
+              <Route path="/estados-animal/editar/:_id" element={<EditarEstadoAnimal/>}/>
               <Route path="/iniciar-sesion" element={<Login/>}/>
+
+              <Route path="/animales/anadir-estado/:_id" element={<AnadirEstados/>}/>
+              <Route path="/animales/anadir-intervencion/:_id" element={<AnadirIntervenciones/>}/>
             </Routes>
 
 

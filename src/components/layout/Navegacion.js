@@ -9,8 +9,9 @@ const Navegacion = () => {
         <aside className="sidebar col-3">
             <h2>Administrar</h2>
             <nav className="navegacion">
-                <Link to={"/"} className="animales">Animales</Link>
-                <Link to={"/"} className="intervenciones">Intervenciones</Link>
+                {<Link to={"/"} className="animales">Animales</Link>}
+                {<Link to={"/intervenciones"} className="intervenciones">Intervenciones</Link>}
+                {<Link to={"/estados-animal"} className="estados-animal">Estados Animal</Link>}
                 {/* <a href="productos.html" className="productos">Productos</a> */}
                 {/* <a href="pedidos.html" className="pedidos">Pedidos</a> */}
             </nav>

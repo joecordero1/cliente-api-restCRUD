@@ -14,8 +14,9 @@ function Animal({ animal }) {
     const [tipoAnimalNombre, setTipoAnimalNombre] = useState('');
     const [razaNombre, setRazaNombre] = useState('');
     const [sexos, setSexoNombre] = useState('');
+    const [estadosDetalles, setEstadosDetalles] = useState([]);
 
-    const { _id, tipoAnimal, raza, estados, ubicacion, salud, Edad,sexo, FechaRegistro, FechaActualizacion } = animal;
+    const { _id, tipoAnimal, raza, estados, ubicacion, salud, intervenciones, Edad,sexo, FechaRegistro, FechaActualizacion } = animal;
 
     // Cargar los nombres de tipoAnimal, raza y sexo al cargar el componente
     useEffect(() => {
@@ -39,6 +40,26 @@ function Animal({ animal }) {
             });
         }
     }, [animal, token]);
+
+    // Cargar los detalles de los estados
+    useEffect(() => {
+        if (estados.length > 0) {
+            Promise.all(estados.map(id => 
+                clienteAxios.get(`/estados-animal/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+            )).then(responses => {
+                const detalles = responses.map((res, index) => ({
+                    ...res.data,
+                    detalles: estados[index].detalles, // Añadir detalles específicos del animal
+                    nombre: res.data.nombre,
+                }));
+                setEstadosDetalles(detalles);
+            }).catch(error => {
+                console.error('Error al cargar los detalles de los estados', error);
+            });
+        }
+    }, [estados, token]);
 
     const deleteAnimal = id => {
         Swal.fire({
@@ -70,12 +91,33 @@ function Animal({ animal }) {
             }
         });
     }
-
+    
     const formatEstadoSalud = (items) => {
         if (!items || items.length === 0) {
             return 'Sin datos';
         }
-        return items.map(item => `${item.estado.clave} (${item.detalles.map(det => `${det.clave}: ${det.valor}`).join(', ')})`).join('; ');
+        return items.map((item, index) => (
+            <p key={index}>
+                {item.estado}
+            </p>
+        ));
+    };
+    const formatDestalles = (items) => {
+        if (!items || items.length === 0) {
+            return 'Sin datos';
+        }
+        return items.map((item, index) => (
+            <p key={index}>
+                {item._id} 
+                {item.detalles.map(det => `${det.clave}: ${det.valor}`).join(', ')}
+            </p>
+        ));
+    };
+    const formatIntervenciones = (items) => {
+        if (!items || items.length === 0) {
+            return 'Sin datos';
+        }
+        return items.map(item => `${item.intervenciones.clave} (${item.detalles.map(det => `${det.clave}: ${det.valor}`).join(', ')})`).join('; ');
     };
 
     return (
@@ -84,15 +126,25 @@ function Animal({ animal }) {
                 <p className="nombre">IDAnimal: {animal._id}</p>
                 <p className="tipo">Tipo Animal: {tipoAnimalNombre}</p>
                 <p>Raza: {razaNombre}</p>
-                <p>Estado(s): {formatEstadoSalud(estados)}</p>
+                <div>Estado(s): {formatEstadoSalud(estados)}</div>
+                <div>Detalles: {formatDestalles(estadosDetalles)}</div>
                 <p>Ubicación: {`Latitud: ${ubicacion.coordinates[1]}, Longitud: ${ubicacion.coordinates[0]}`}</p>
                 <p>Salud: {formatEstadoSalud(salud)}</p>
+                <p>Intervenciones: {formatIntervenciones(intervenciones)}</p>
                 <p>Edad: {Edad}</p>
                 <p>Sexo: {sexos}</p>
                 <p>Fecha de Registro: {FechaRegistro}</p>
                 <p>Fecha de Actualización: {FechaActualizacion}</p>
             </div>
             <div className="acciones">
+                <Link to={`/animales/anadir-estado/${_id}`} className="btn btn-azul">
+                    <i className="fas fa-pen-alt"></i>
+                    Añadir Estado
+                </Link>
+                <Link to={`/animales/anadir-intervencion/${_id}`} className="btn btn-azul">
+                    <i className="fas fa-pen-alt"></i>
+                    Añadir Intervencion
+                </Link>
                 <Link to={`/animales/editar/${_id}`} className="btn btn-azul">
                     <i className="fas fa-pen-alt"></i>
                     Editar Animal
