@@ -119,12 +119,6 @@ function Animal({ animal }) {
         }
         return items.map(item => `${item.intervenciones.clave} (${item.detalles.map(det => `${det.clave}: ${det.valor}`).join(', ')})`).join('; ');
     };
-    const formatIntervenciones = (items) => {
-        if (!items || items.length === 0) {
-            return 'Sin datos';
-        }
-        return items.map(item => `${item.intervenciones.clave} (${item.detalles.map(det => `${det.clave}: ${det.valor}`).join(', ')})`).join('; ');
-    };
 
     return (
         <li className="animal">
