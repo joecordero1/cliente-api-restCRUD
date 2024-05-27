@@ -6,8 +6,7 @@ const CRMProvider = props => {
     //definimos el state
     const [auth, guardarAuth] = useState({
         token: '',
-        auth: false,
-        usuarioId: '' // Agregar propiedad usuarioId
+        auth: false
     });
 
     return (

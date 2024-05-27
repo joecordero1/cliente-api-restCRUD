@@ -10,7 +10,6 @@ function Login() {
 
     //Auth y token
     const [auth, guardarAuth] = useContext(CRMContext);
-    console.log(auth);
     const [ credenciales, guardarCredenciales] = useState({});
     const navigate = useNavigate();
     //inicia sesion en el servidor
@@ -24,9 +23,10 @@ function Login() {
             localStorage.setItem('token', token);
             //colocar el token en el state
             guardarAuth({
-                token,
-                auth:true
-            })
+              token,
+              auth: true,
+              email: credenciales.email // Guardar el email en el contexto
+          });
 
             //alerta
             Swal.fire(
@@ -34,6 +34,8 @@ function Login() {
                 'Ha iniciado sesion',
                 'success'
             )
+
+            console.log("email: "+credenciales.email);//Aqui si está correcto el mail
 
             //navigate redireccioar
             navigate('/');

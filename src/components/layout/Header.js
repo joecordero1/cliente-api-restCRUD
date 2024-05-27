@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { CRMContext } from '../../context/CRMContext';
-import {useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom';
 
 
 const Header = () => {

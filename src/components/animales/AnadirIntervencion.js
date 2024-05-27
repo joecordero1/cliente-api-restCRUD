@@ -4,126 +4,102 @@ import Swal from 'sweetalert2';
 import clienteAxios from '../../config/axios';
 import { CRMContext } from '../../context/CRMContext';
 
-function AnadirIntervenciones() {
-    const { _id } = useParams(); //id del animal
-    const [auth,] = useContext(CRMContext);
+function AnadirIntervencion() {
+    const { _id } = useParams(); // id del animal
+    const [auth] = useContext(CRMContext);
     const navigate = useNavigate();
 
-    const [estadosAnimal, setEstadosAnimal] = useState([]);
-    const [estadoSeleccionado, setEstadoSeleccionado] = useState('');
     const [detalles, setDetalles] = useState([]);
 
-    const [animal, setAnimal] = useState({
-        Id_Animal: '',
-        Id_TipoAnimal: '',
-        Id_Raza: '',
-        estados: [],
-        salud: [],
-        ubicacion: {
-            type: 'Point',
-            coordinates: [] // Iniciar vacío, puede ser llenado por una selección en el mapa o ingreso manual.
-        },
-        Edad: 0,
-        Id_Sexo: '',
-        FechaRegistro: '',
-        FechaActualizacion: ''
+    const [intervencion, setIntervencion] = useState({
+        Id_Animal: _id,
+        Id_Usuario: '', // Asignar aquí el id del usuario
+        nombre: '',
+        resultadoAntes: '',
+        resultadoDespues: '',
+        comentarios: '',
+        detalles: []
     });
 
+    // Cargar los datos del animal y usuario
     useEffect(() => {
         const cargarDatos = async () => {
             try {
-                const [animalRes, estadosRes] = await Promise.all([
-                    clienteAxios.get(`/animales/${_id}`, {
-                        headers: { Authorization: `Bearer ${auth.token}` }
-                    }),
-                    clienteAxios.get('/estados-animal', {
-                        headers: { Authorization: `Bearer ${auth.token}` }
-                    })
-                ]);
+                const animalRes = await clienteAxios.get(`/animales/${_id}`, {
+                    headers: { Authorization: `Bearer ${auth.token}` }
+                });
+                console.log('Animal Res:', animalRes.data);
 
-                if (animalRes.data && estadosRes.data) {
-                    setAnimal(animalRes.data);
-                    setEstadosAnimal(estadosRes.data);
+                const userRes = await clienteAxios.get(`/usuarios`, {
+                    headers: { Authorization: `Bearer ${auth.token}` }
+                });
+                console.log('User Res:', userRes.data);
+
+                if (!auth.email) {
+                    console.error('Error: auth.email no está definido');
+                    Swal.fire('Error', 'El correo electrónico del usuario autenticado no está disponible.', 'error');
+                    return;
+                }
+
+                const usuario = userRes.data.find(user => {
+                    if (user.email) {
+                        return user.email.trim().toLowerCase() === auth.email.trim().toLowerCase();
+                    }
+                    return false;
+                });
+                console.log('Usuario Encontrado:', usuario);
+                const userId = usuario ? usuario._id : null;
+
+                if (animalRes.data && userId) {
+                    setIntervencion({
+                        ...intervencion,
+                        Id_Animal: animalRes.data._id,
+                        Id_Usuario: userId
+                    });
                 } else {
                     console.error('Error: Respuesta inesperada de la API');
+                    Swal.fire('Error', 'No se encontraron datos válidos para el animal o usuario.', 'error');
                 }
             } catch (error) {
                 console.error('Error al cargar los datos:', error);
+                Swal.fire('Error', 'No se pudieron cargar los datos.', 'error');
             }
         };
         cargarDatos();
-    }, [_id, auth.token]);
+    }, [_id, auth.token, auth.email]);
 
-    // Query a la API
-    const consultarAPI = async () => {
-        try {
-            const animalConsulta = await clienteAxios.get(`/animales/${_id}`, {
-                headers: {
-                    Authorization: `Bearer ${auth.token}`
-                }
-            });
-
-            if (animalConsulta.data) {
-                // Colocar en el state
-                setAnimal(animalConsulta.data);
-            } else {
-                console.error('Error: Respuesta inesperada de la API');
-            }
-        } catch (error) {
-            console.error('Error al consultar la API:', error);
-        }
-    }
-
-    // useEffect cuando cambia
-    useEffect(() => {
-        consultarAPI();
-    }, []);
-
-    const handleEstadoChange = e => {
-        const estadoId = e.target.value;
-        setEstadoSeleccionado(estadoId);
-
-        const estado = estadosAnimal.find(est => est._id === estadoId);
-        if (estado) {
-            const nuevosDetalles = estado.detalles.map(detalle => ({
-                clave: detalle.clave,
-                valor: ''
-            }));
-            setDetalles(nuevosDetalles);
-        } else {
-            setDetalles([]);
-        }
-    }
+    const handleInputChange = e => {
+        setIntervencion({
+            ...intervencion,
+            [e.target.name]: e.target.value
+        });
+    };
 
     const handleDetalleChange = (index, e) => {
         const nuevosDetalles = [...detalles];
-        nuevosDetalles[index].valor = e.target.value;
+        nuevosDetalles[index][e.target.name] = e.target.value;
         setDetalles(nuevosDetalles);
-    }
+    };
 
-    // Manejador del envío del formulario
-    const agregarEstadoAnimal = async e => {
+    const agregarCampoDetalle = () => {
+        setDetalles([...detalles, { clave: '', valor: '' }]);
+    };
+
+    const agregarIntervencion = async e => {
         e.preventDefault();
 
         // Obtener la fecha actual del sistema
         const fechaActualizacion = new Date().toISOString();
 
         try {
-            // Crear el nuevo estado con sus detalles específicos
-            const nuevoEstado = {
-                estado: estadoSeleccionado, // Este es el ID del estado
-                detalles: detalles // Este es el arreglo de detalles específicos
+            // Crear la nueva intervención con sus detalles específicos
+            const nuevaIntervencion = {
+                ...intervencion,
+                detalles: detalles.filter(detalle => detalle.clave !== '' || detalle.valor !== '')
             };
 
-            // Actualizar el estado del animal y también la fecha de actualización
-            const animalActualizado = {
-                ...animal,
-                estados: [...animal.estados, nuevoEstado],
-                FechaActualizacion: fechaActualizacion
-            };
-
-            // Enviar la solicitud para actualizar el animal con el estado actualizado
-            const response = await clienteAxios.put(`/animales/${animal._id}`, animalActualizado, {
+            // Enviar la solicitud para agregar la nueva intervención
+            const response = await clienteAxios.post('/intervenciones', nuevaIntervencion, {
                 headers: {
                     Authorization: `Bearer ${auth.token}`
                 }
@@ -131,48 +107,93 @@ function AnadirIntervenciones() {
 
             if (response.data) {
                 // Manejar la respuesta
-                Swal.fire('Actualizado', response.data.mensaje, 'success');
+                Swal.fire('Agregado', response.data.mensaje, 'success');
                 navigate('/');
             } else {
                 console.error('Error: Respuesta inesperada de la API');
-                Swal.fire('Error', 'No se pudo actualizar el animal', 'error');
+                Swal.fire('Error', 'No se pudo agregar la intervención', 'error');
             }
         } catch (error) {
-            console.error('Error al actualizar el animal:', error);
-            Swal.fire('Error', 'No se pudo actualizar el animal', 'error');
+            console.error('Error al agregar la intervención:', error);
+            Swal.fire('Error', 'No se pudo agregar la intervención', 'error');
         }
     };
 
     return (
-        <form onSubmit={agregarEstadoAnimal}>
-            <legend>Agregar Estado al Animal</legend>
+        <form onSubmit={agregarIntervencion}>
+            <legend>Agregar Intervención al Animal</legend>
 
             <div className="campo">
-                <label>Estado:</label>
-                <select onChange={handleEstadoChange} value={estadoSeleccionado}>
-                    <option value="">-- Seleccione --</option>
-                    {estadosAnimal.map(estado => (
-                        <option key={estado._id} value={estado._id}>{estado.nombre}</option>
-                    ))}
-                </select>
+                <label>Nombre:</label>
+                <input 
+                    type="text"
+                    name="nombre"
+                    placeholder="Nombre de la intervención"
+                    onChange={handleInputChange}
+                />
             </div>
 
-            {detalles.map((detalle, index) => (
-                <div className="campo" key={index}>
-                    <label>{detalle.clave}:</label>
-                    <input
-                        type="text"
-                        value={detalle.valor}
-                        onChange={e => handleDetalleChange(index, e)}
-                    />
-                </div>
-            ))}
+            <div className="campo">
+                <label>Resultado Antes:</label>
+                <input 
+                    type="number"
+                    name="resultadoAntes"
+                    placeholder="Resultado antes de la intervención"
+                    onChange={handleInputChange}
+                />
+            </div>
+
+            <div className="campo">
+                <label>Resultado Después:</label>
+                <input 
+                    type="number"
+                    name="resultadoDespues"
+                    placeholder="Resultado después de la intervención"
+                    onChange={handleInputChange}
+                />
+            </div>
+
+            <div className="campo">
+                <label>Comentarios:</label>
+                <textarea
+                    name="comentarios"
+                    placeholder="Comentarios"
+                    onChange={handleInputChange}
+                ></textarea>
+            </div>
+
+            <div className="campo">
+                <label>Detalles de Intervención:</label>
+                {detalles.map((detalle, index) => (
+                    <div className="detalle-campo" key={index}>
+                        <input 
+                            type="text"
+                            name="clave"
+                            placeholder="Clave"
+                            value={detalle.clave}
+                            onChange={e => handleDetalleChange(index, e)}
+                        />
+                        <input 
+                            type="text"
+                            name="valor"
+                            placeholder="Valor"
+                            value={detalle.valor}
+                            onChange={e => handleDetalleChange(index, e)}
+                        />
+                    </div>
+                ))}
+                <button type="button" onClick={agregarCampoDetalle}>+</button>
+            </div>
 
             <div className="enviar">
-                <input type="submit" className="btn btn-azul" value="Agregar Estado" />
+                <input 
+                    type="submit"
+                    className="btn btn-azul"
+                    value="Agregar Intervención"
+                />
             </div>
         </form>
     );
 }
 
-export default AnadirIntervenciones;
+export default AnadirIntervencion;

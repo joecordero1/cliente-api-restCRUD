@@ -2,7 +2,6 @@ import React, { Fragment, useState, useContext, useEffect } from 'react';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useNavigate, useParams } from 'react-router-dom';
 import { CRMContext } from '../../context/CRMContext';
 
 function NuevaIntervencion() {

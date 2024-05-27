@@ -12,6 +12,7 @@ const Navegacion = () => {
                 {<Link to={"/"} className="animales">Animales</Link>}
                 {<Link to={"/intervenciones"} className="intervenciones">Intervenciones</Link>}
                 {<Link to={"/estados-animal"} className="estados-animal">Estados Animal</Link>}
+                {<Link to={"/analisis"} className="analisis">Analisis</Link>}
                 {/* <a href="productos.html" className="productos">Productos</a> */}
                 {/* <a href="pedidos.html" className="pedidos">Pedidos</a> */}
             </nav>
