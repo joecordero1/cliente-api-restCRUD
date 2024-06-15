@@ -12,9 +12,10 @@ const Navegacion = () => {
                 {<Link to={"/"} className="animales">Animales</Link>}
                 {<Link to={"/intervenciones"} className="intervenciones">Intervenciones</Link>}
                 {<Link to={"/estados-animal"} className="estados-animal">Estados Animal</Link>}
-                {<Link to={"/analisis"} className="analisis">Analisis</Link>}
-                {/* <a href="productos.html" className="productos">Productos</a> */}
-                {/* <a href="pedidos.html" className="pedidos">Pedidos</a> */}
+                {<Link to={"/analisis"} className="analisis">Analisis general anual</Link>}
+                {<Link to={"/segmentacion"} className="segmentacion">Segmentacion por criterio</Link>}
+                {<Link to={"/segmentacionTemporal"} className="segmentacionTemporal">Segmentacion temporal</Link>}
+                {<Link to={"/dashboard"} className="dashboard">Dashboard mensual</Link>}
             </nav>
         </aside>
     );

@@ -174,6 +174,8 @@ function NuevoAnimal() {
                     </select>
                 </div>
 
+                
+
                 <div className="campo">
                     <label>Latitud:</label>
                     <input type="number"

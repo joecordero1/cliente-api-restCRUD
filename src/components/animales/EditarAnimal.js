@@ -133,14 +133,14 @@ function EditarAnimal() {
             ...prevState,
             ubicacion: {
                 ...prevState.ubicacion,
-                coordinates: name === 'latitud' ? [Number(value), prevState.ubicacion.coordinates[1]] : [prevState.ubicacion.coordinates[0], Number(value)]
+                coordinates: name === 'longitud' ? [Number(value), prevState.ubicacion.coordinates[1]] : [prevState.ubicacion.coordinates[0], Number(value)]
             }
         }));
     }
 
     return (
         <Fragment>
-            <h2>Nuevo Animal</h2>
+            <h2>Editar Animal</h2>
 
             <form onSubmit={actualizarAnimal}>
 
@@ -199,25 +199,26 @@ function EditarAnimal() {
                 </div>
 
                 <div className="campo">
-                    <label>Latitud:</label>
-                    <input type="number"
-                        placeholder="Latitud"
-                        name="latitud"
-                        onChange={actualizarUbicacion}
-                        value={animal.ubicacion.coordinates[0]}
-                    />
-                </div>
-
-                <div className="campo">
                     <label>Longitud:</label>
                     <input type="number"
                         placeholder="Longitud"
                         name="longitud"
                         onChange={actualizarUbicacion}
+                        value={animal.ubicacion.coordinates[0]}
+                    />
+                </div>  
+
+                <div className="campo">
+                    <label>Latitud:</label>
+                    <input type="number"
+                        placeholder="Latitud"
+                        name="latitud"
+                        onChange={actualizarUbicacion}
                         value={animal.ubicacion.coordinates[1]}
                     />
                 </div>
 
+                      
 
                 <div className="enviar">
                     <input type="submit"

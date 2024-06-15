@@ -25,8 +25,11 @@ import Login from './components/auth/Login';
 import { CRMContext, CRMProvider } from './context/CRMContext';
 import AnadirEstados  from './components/animales/AnadirEstados';
 import AnadirIntervenciones from './components/animales/AnadirIntervencion';
-import Usuarios from './components/usuarios/Usuarios'
+import Usuarios from './components/usuarios/Usuarios';
 import Analisis from './components/analisis/Analisis';
+import Segmentacion from './components/analisis/Segmentacion';
+import SegmentacionTemporal from './components/analisis/SegmentacionTemporal';
+import Dashboard from './components/analisis/Dashboard';
 
 function App () {
 
@@ -59,7 +62,10 @@ function App () {
               <Route path="/animales/anadir-intervencion/:_id" element={<AnadirIntervenciones/>}/>
 
               <Route path="/usuarios" element={<Usuarios/>}/>
-              <Route path="/analisis" element={<Analisis />} />
+              <Route path="/analisis" element={<Analisis />}/> 
+              <Route path="/segmentacion" element={<Segmentacion />}/>
+              <Route path="/segmentacionTemporal" element={<SegmentacionTemporal />}/>
+              <Route path="/dashboard" element={<Dashboard/>}/>
             </Routes>
 
 

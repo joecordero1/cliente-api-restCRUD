@@ -16,6 +16,7 @@ function EditarIntervencion() {
         resultadoAntes: '',
         resultadoDespues: '',
         comentarios: '',
+        fecha: '',
         seguimiento: []
     });
 
@@ -135,6 +136,15 @@ function EditarIntervencion() {
                         name="resultadoDespues"
                         onChange={actualizarState}
                         value={intervencion.resultadoDespues}
+                    />
+                </div>
+
+                <div className="campo">
+                    <label>Fecha:</label>
+                    <input type="date"
+                        name="fecha"
+                        onChange={actualizarState}
+                        value={intervencion.fecha ? intervencion.fecha.split('T')[0] : ''}
                     />
                 </div>
 

@@ -55,8 +55,10 @@ function Intervencion({ intervencion }) {
                 <p>Resultado Antes: {resultadoAntes}</p>
                 <p>Resultado Después: {resultadoDespues}</p>
                 <p>Comentarios: {comentarios}</p>
+                {/*
                 <p>Efectividad Calculada: {efectividadCalculada}</p>
                 <p>Seguimiento: {seguimiento.map(seg => `${seg.fecha}: ${seg.resultado}, Comentario: ${seg.comentario}`).join(', ')}</p>
+                */}
             </div>
             <div className="acciones">
                 <Link to={`/intervenciones/editar/${_id}`} className="btn btn-azul">
